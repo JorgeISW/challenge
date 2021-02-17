@@ -1,0 +1,125 @@
+{% extends "web_service/base.html"%}
+{% load static %}
+{% block head %}
+    <link href="{% static 'web_service/css/index.css' %}" rel="stylesheet"/>
+    <link href="{% static 'web_service/css/Chart.min.css' %}" rel="stylesheet"/>
+    <script src="{% static 'web_service/js/Chart.js' %}"></script>
+{% endblock %}
+{% block title %}
+    Cumplo Challenge
+{% endblock %}
+{% block body %}
+    <h2 class="main-header">Cumplo Challenge</h2>
+    <form action="{% url 'web_service:home' %}" method="post">
+        {% csrf_token %}
+        {% if error_message %}
+            <div class="row"><div class="col-7 error"><strong>{{ error_message }}</strong></div></div>
+        {% endif %}
+        <div class="row form">
+            <div class="col-auto">
+                <label for="idSerie" class="form-label">Serie</label>
+                <select name="idSerie" id="idSerie" class="form-select">
+                    <option value="SP68257">UDIS</option>
+                    <option value="SF43718">DOLLAR</option>
+                    <option value="SF43783,SF43878,SF111916">TIIE</option>
+                </select>
+            </div>
+            <div class="col-auto">
+                <label for="fechaIni" class="form-label">Start Date</label>
+                <input name="fechaIni" id="fechaIni" type="date" class="form-control"/>
+            </div>
+            <div class="col-auto">
+                <label for="fechaFin" class="form-label">End Date</label>
+                <input name="fechaFin" id="fechaFin" type="date" class="form-control"/>
+            </div>
+            <div class="col-auto"><input type="submit" value="Consult" class="btn btn-success btn-submit"/></div>
+        </div>
+    </form>
+    {% if content_list %}
+        {% for content in content_list %}
+            <h4 class="title">{{ content.title }}</h4>
+            <canvas id="canvas-{{ forloop.counter }}" style="display: block; width:80vw; height:40vh;" class="chartjs-render-monitor"></canvas>
+            <div class="container">
+                <table class="table table-responsive table-vals">
+                    <thead class="table-success">
+                        <tr>
+                            <th>Average</th>
+                            <th>Max Value</th>
+                            <th>Min Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ content.average }}</td>
+                            <td>{{ content.max }}</td>
+                            <td>{{ content.min }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="table table-hover table-responsive table-vals">
+                    <thead class="table-primary">
+                        <tr>
+                            <th>Date</th>
+                            <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in content.data %}
+                            <tr>
+                                <td>{{ row.fecha }}</td>
+                                <td>{{ row.dato }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <script>
+                var config = {
+                    type: 'line',
+                    data: {
+                        labels: [{% for data in content.data %}'{{ data.fecha }}',{% endfor %}],
+                        datasets: [{
+                            label: '',
+                            backgroundColor: 'rgb(75, 192, 192)',
+                            borderColor: 'rgb(75, 192, 192)',
+                            data: [{% for data in content.data %}'{{ data.dato }}',{% endfor %}],
+                            fill: false,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        tooltips: {
+                            mode: 'index',
+                            intersect: false,
+                        },
+                        hover: {
+                            mode: 'nearest',
+                            intersect: true
+                        },
+                        scales: {
+                            xAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Date'
+                                }
+                            }],
+                            yAxes: [{
+                                display: true,
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Value'
+                                }
+                            }]
+                        }
+                    }
+                };
+                var ctx = document.getElementById('canvas-{{ forloop.counter }}').getContext('2d');
+                window.myLine = new Chart(ctx, config);
+            </script>
+        {% endfor %}
+    {% endif %}
+{% endblock %}
+{% block body_bottom %}
+
+{% endblock %}

@@ -1,0 +1,50 @@
+.main-header {
+    text-align: center;
+    margin-top: 5%;
+}
+.form {
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+.btn-submit {
+    margin-top: 40%;
+}
+.title {
+    text-align: center;
+    margin: 30px;
+}
+.chart {
+    display: block;
+    width: 80vw;
+    height:40vh;
+}
+.table-vals {
+    max-width: 450px;
+    text-align: center;
+    margin: auto;
+    margin-top: 30px;
+}
+.error {
+    color: red;
+    margin: auto;
+    margin-top: 20px;
+}
+/*************************
+** Mobile
+**************************/
+@media only screen and (max-width: 991px) {
+    .col-auto {
+        flex: 0 0 auto;
+        width: 100%;
+        margin-top: 10px;
+    }
+    .btn-submit {
+        width: 100%;
+        margin-top: 15px;
+    }
+    .error {
+        width: 90%;
+        margin-top: 30px;
+    }
+}
